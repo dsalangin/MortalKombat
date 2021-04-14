@@ -1,20 +1,13 @@
-<<<<<<< Updated upstream
-const gamer = {
-=======
 const arenas = document.querySelector(".arenas");
 const button = document.querySelector(".control .button");
 
 const player1 = {
   player: 1,
->>>>>>> Stashed changes
   name: "Scorpion",
   hp: 100,
   img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
   weapon: ["hammer", "fork"],
   attack: function () {
-<<<<<<< Updated upstream
-    console.log(gamer.name + " Fight")
-=======
     console.log(this.name + " Fight")
   },
   changeHP: changeHP,
@@ -40,48 +33,34 @@ function createElement (tag, className) {
   const $tag = document.createElement(tag);
   if (className) {
     $tag.classList.add(className);
->>>>>>> Stashed changes
   }
+  return $tag;
 };
 
-const createPlayer = function (playersNumber, gamer) {
-  const arenas = document.querySelector(".arenas");
+const createPlayer = function (player) {
 
-  const player1 = document.createElement("div");
-  player1.classList.add(playersNumber);
+  const $player = createElement("div", "player" + player.player);
+  const progressbar = createElement("div", "progressbar");
+  const character = createElement("div", "character");
+  const life = createElement("div", "life");
+  const name = createElement("div", "name");
+  const img = createElement("img");
 
-  const progressbar =  document.createElement("div");
-  progressbar.classList.add("progressbar");
-
-  const character = document.createElement("div");
-  character.classList.add("character");
-
-  const life = document.createElement("div");
-  life.classList.add("life");
-  life.style.width = gamer.hp;
-
-<<<<<<< Updated upstream
-  const name = document.createElement("div");
-  name.classList.add("name");
-  name.innerText = gamer.name;
-
-  const img = document.createElement("img");
-  img.src = gamer.img;
-
-  arenas.appendChild(player1);
-
-  player1.appendChild(progressbar);
-  player1.appendChild(character);
+  life.style.width = player.hp + "%";
+  name.innerText = player.name;
+  img.src = player.img;
+  
+  $player.appendChild(progressbar);
+  $player.appendChild(character);
   
   progressbar.appendChild(life);
   progressbar.appendChild(name);
 
   character.appendChild(img);   
 
+  return $player;
 };
-createPlayer("player1", gamer);
-createPlayer("player2", gamer);
-=======
+
 function getRandom (value) {
   return Math.ceil(Math.random() * value);
 };
@@ -156,4 +135,3 @@ button.addEventListener("click", function () {
 
 arenas.appendChild(createPlayer(player1));
 arenas.appendChild(createPlayer(player2));
->>>>>>> Stashed changes
