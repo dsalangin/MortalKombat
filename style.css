@@ -383,6 +383,7 @@ form:invalid button[class=button]:active::after {
     margin-bottom: -50px;
     transition: 0.3s;
 }
+
 .ul label span:hover {
     background-color: rgba(240, 231, 107, 0.788);
 }
