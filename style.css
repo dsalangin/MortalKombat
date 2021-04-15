@@ -311,7 +311,6 @@ form:invalid button[class=button]:active {
     top: 0px;
 }
 
-
 form:invalid button[class=button]:active::after {
     top: 4px;
 }
