@@ -173,6 +173,7 @@ function compareHP () {
 
 $formFight.addEventListener('submit', function (event) {
   event.preventDefault();
+  
   compareAttacks(myAtack(), enemyAtack());
   compareHP();
 });
