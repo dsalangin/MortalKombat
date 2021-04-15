@@ -1,25 +1,27 @@
-<<<<<<< Updated upstream
-const gamer = {
-=======
 const arenas = document.querySelector(".arenas");
 const button = document.querySelector(".control .button");
+const $formFight = document.querySelector('.control');
+
+const HIT = {
+  head: 30,
+  body: 25,
+  foot: 20
+};
+
+const ATACK = ['head', 'body', 'foot'];
 
 const player1 = {
   player: 1,
->>>>>>> Stashed changes
   name: "Scorpion",
   hp: 100,
   img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
   weapon: ["hammer", "fork"],
   attack: function () {
-<<<<<<< Updated upstream
-    console.log(gamer.name + " Fight")
-=======
     console.log(this.name + " Fight")
   },
-  changeHP: changeHP,
-  elHP: elHP,
-  renderHP: renderHP
+  changeHP,
+  elHP,
+  renderHP
 };
 
 const player2 = {
@@ -40,48 +42,34 @@ function createElement (tag, className) {
   const $tag = document.createElement(tag);
   if (className) {
     $tag.classList.add(className);
->>>>>>> Stashed changes
   }
+  return $tag;
 };
 
-const createPlayer = function (playersNumber, gamer) {
-  const arenas = document.querySelector(".arenas");
+const createPlayer = function (player) {
 
-  const player1 = document.createElement("div");
-  player1.classList.add(playersNumber);
+  const $player = createElement("div", "player" + player.player);
+  const progressbar = createElement("div", "progressbar");
+  const character = createElement("div", "character");
+  const life = createElement("div", "life");
+  const name = createElement("div", "name");
+  const img = createElement("img");
 
-  const progressbar =  document.createElement("div");
-  progressbar.classList.add("progressbar");
-
-  const character = document.createElement("div");
-  character.classList.add("character");
-
-  const life = document.createElement("div");
-  life.classList.add("life");
-  life.style.width = gamer.hp;
-
-<<<<<<< Updated upstream
-  const name = document.createElement("div");
-  name.classList.add("name");
-  name.innerText = gamer.name;
-
-  const img = document.createElement("img");
-  img.src = gamer.img;
-
-  arenas.appendChild(player1);
-
-  player1.appendChild(progressbar);
-  player1.appendChild(character);
+  life.style.width = player.hp + "%";
+  name.innerText = player.name;
+  img.src = player.img;
+  
+  $player.appendChild(progressbar);
+  $player.appendChild(character);
   
   progressbar.appendChild(life);
   progressbar.appendChild(name);
 
   character.appendChild(img);   
 
+  return $player;
 };
-createPlayer("player1", gamer);
-createPlayer("player2", gamer);
-=======
+
 function getRandom (value) {
   return Math.ceil(Math.random() * value);
 };
@@ -117,32 +105,61 @@ function createReloadButton () {
   const $reloadWrap = createElement ('div', 'reloadWrap');
   const $reloadButton = createElement ('button', 'button');
   $reloadButton.innerText = 'Restart';
-  $reloadWrap.appendChild($reloadButton);
-  return $reloadWrap;
-};
 
-function renderReloadButton () {
-  arenas.appendChild(createReloadButton());
-};
-
-function getReloadPage () {
-  renderReloadButton();
-  const reloadButton = document.querySelector(".reloadWrap .button");
-  reloadButton.addEventListener('click', function () {
+  $reloadButton.addEventListener('click', function () {
     window.location.reload();
   });
-}
 
-button.addEventListener("click", function () {
-  player1.changeHP(getRandom(20));
-  player1.renderHP();
+  $reloadWrap.appendChild($reloadButton);
+  arenas.appendChild($reloadWrap);
+};
 
-  player2.changeHP(getRandom(20));
-  player2.renderHP();
+arenas.appendChild(createPlayer(player1));
+arenas.appendChild(createPlayer(player2));
 
+function enemyAtack () {
+  const hit = ATACK[getRandom(3) - 1];
+  const defence = ATACK[getRandom(3) - 1];
+
+  return {
+    value: getRandom(HIT[hit]),
+    hit,
+    defence
+  };
+};
+
+function myAtack () {
+  const atack = {};
+  for (let item of $formFight) {
+    if (item.checked && item.name === 'hit') {
+      atack.value = getRandom(HIT[item.value]);
+      atack.hit = item.value;
+    }
+
+    if (item.checked && item.name === 'defence') {
+      atack.defence = item.value;
+    }
+
+    item.checked = false;
+  }
+  return atack;
+};
+
+function compareAttacks (player1Atack, player2Atack) {
+  if (player1Atack.hit !== player2Atack.defence) {
+    player2.changeHP(player1Atack.value);
+    player2.renderHP();
+  }
+  if (player2Atack.hit !== player1Atack.defence) {
+    player1.changeHP(player2Atack.value);
+    player1.renderHP();
+  }
+};
+
+function compareHP () {
   if (player1.hp === 0 || player2.hp === 0) {
     button.disabled = true;
-    getReloadPage();
+    createReloadButton();
   }
 
   if (player1.hp === 0 && player1.hp < player2.hp) {
@@ -152,8 +169,10 @@ button.addEventListener("click", function () {
   } else if (player1.hp === 0 && player2.hp === 0) {
     arenas.appendChild(playerWins());
   }
-});
+};
 
-arenas.appendChild(createPlayer(player1));
-arenas.appendChild(createPlayer(player2));
->>>>>>> Stashed changes
+$formFight.addEventListener('submit', function (event) {
+  event.preventDefault();
+  compareAttacks(myAtack(), enemyAtack());
+  compareHP();
+});
