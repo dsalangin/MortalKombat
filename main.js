@@ -1,5 +1,14 @@
 const arenas = document.querySelector(".arenas");
 const button = document.querySelector(".control .button");
+const $formFight = document.querySelector('.control');
+
+const HIT = {
+  head: 30,
+  body: 25,
+  foot: 20
+};
+
+const ATACK = ['head', 'body', 'foot'];
 
 const player1 = {
   player: 1,
@@ -10,9 +19,9 @@ const player1 = {
   attack: function () {
     console.log(this.name + " Fight")
   },
-  changeHP: changeHP,
-  elHP: elHP,
-  renderHP: renderHP
+  changeHP,
+  elHP,
+  renderHP
 };
 
 const player2 = {
@@ -96,32 +105,61 @@ function createReloadButton () {
   const $reloadWrap = createElement ('div', 'reloadWrap');
   const $reloadButton = createElement ('button', 'button');
   $reloadButton.innerText = 'Restart';
-  $reloadWrap.appendChild($reloadButton);
-  return $reloadWrap;
-};
 
-function renderReloadButton () {
-  arenas.appendChild(createReloadButton());
-};
-
-function getReloadPage () {
-  renderReloadButton();
-  const reloadButton = document.querySelector(".reloadWrap .button");
-  reloadButton.addEventListener('click', function () {
+  $reloadButton.addEventListener('click', function () {
     window.location.reload();
   });
-}
 
-button.addEventListener("click", function () {
-  player1.changeHP(getRandom(20));
-  player1.renderHP();
+  $reloadWrap.appendChild($reloadButton);
+  arenas.appendChild($reloadWrap);
+};
 
-  player2.changeHP(getRandom(20));
-  player2.renderHP();
+arenas.appendChild(createPlayer(player1));
+arenas.appendChild(createPlayer(player2));
 
+function enemyAtack () {
+  const hit = ATACK[getRandom(3) - 1];
+  const defence = ATACK[getRandom(3) - 1];
+
+  return {
+    value: getRandom(HIT[hit]),
+    hit,
+    defence
+  };
+};
+
+function myAtack () {
+  const atack = {};
+  for (let item of $formFight) {
+    if (item.checked && item.name === 'hit') {
+      atack.value = getRandom(HIT[item.value]);
+      atack.hit = item.value;
+    }
+
+    if (item.checked && item.name === 'defence') {
+      atack.defence = item.value;
+    }
+
+    item.checked = false;
+  }
+  return atack;
+};
+
+function compareAttacks (player1Atack, player2Atack) {
+  if (player1Atack.hit !== player2Atack.defence) {
+    player2.changeHP(player1Atack.value);
+    player2.renderHP();
+  }
+  if (player2Atack.hit !== player1Atack.defence) {
+    player1.changeHP(player2Atack.value);
+    player1.renderHP();
+  }
+};
+
+function compareHP () {
   if (player1.hp === 0 || player2.hp === 0) {
     button.disabled = true;
-    getReloadPage();
+    createReloadButton();
   }
 
   if (player1.hp === 0 && player1.hp < player2.hp) {
@@ -131,7 +169,10 @@ button.addEventListener("click", function () {
   } else if (player1.hp === 0 && player2.hp === 0) {
     arenas.appendChild(playerWins());
   }
-});
+};
 
-arenas.appendChild(createPlayer(player1));
-arenas.appendChild(createPlayer(player2));
+$formFight.addEventListener('submit', function (event) {
+  event.preventDefault();
+  compareAttacks(myAtack(), enemyAtack());
+  compareHP ();
+});
