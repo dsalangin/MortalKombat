@@ -1,7 +1,5 @@
 const arenas = document.querySelector(".arenas");
 const button = document.querySelector(".control .button");
-<<<<<<< Updated upstream
-=======
 const $formFight = document.querySelector('.control');
 const $chat = document.querySelector('.chat');
 
@@ -12,7 +10,6 @@ const HIT = {
 };
 
 const ATACK = ['head', 'body', 'foot'];
->>>>>>> Stashed changes
 
 const logs = {
   start: 'Часы показывали [time], когда [player1] и [player2] бросили вызов друг другу.',
@@ -63,9 +60,9 @@ const player1 = {
   attack: function () {
     console.log(`${this.name} Fight`)
   },
-  changeHP: changeHP,
-  elHP: elHP,
-  renderHP: renderHP
+  changeHP,
+  elHP,
+  renderHP
 };
 
 const player2 = {
@@ -149,33 +146,18 @@ function createReloadButton () {
   const $reloadWrap = createElement ('div', 'reloadWrap');
   const $reloadButton = createElement ('button', 'button');
   $reloadButton.innerText = 'Restart';
-  $reloadWrap.appendChild($reloadButton);
-  return $reloadWrap;
-};
 
-<<<<<<< Updated upstream
-function renderReloadButton () {
-  arenas.appendChild(createReloadButton());
-};
-
-function getReloadPage () {
-  renderReloadButton();
-  const reloadButton = document.querySelector(".reloadWrap .button");
-  reloadButton.addEventListener('click', function () {
+  $reloadButton.addEventListener('click', function () {
     window.location.reload();
   });
-}
 
-button.addEventListener("click", function () {
-  player1.changeHP(getRandom(20));
-  player1.renderHP();
+  $reloadWrap.appendChild($reloadButton);
+  arenas.appendChild($reloadWrap);
+};
 
-  player2.changeHP(getRandom(20));
-  player2.renderHP();
-=======
 arenas.appendChild(createPlayer(player1));
 arenas.appendChild(createPlayer(player2));
-renderLogs(generateLogs('start', player1, player2));
+generateLogs('start', player1, player2);
 
 function enemyAtack () {
   const hit = ATACK[getRandom(3) - 1];
@@ -206,46 +188,34 @@ function playerAtack () {
   return atack;
 };
 
-function compareAttacks (hit, defence, hitValue, hurtPlayer) {
+function compareAttacks (hit, defence, hitValue, attackingPlayer, defendingPlayer ) {
   if (hit !== defence) {
-    hurtPlayer.changeHP(hitValue);
-    hurtPlayer.renderHP();
-    if (hurtPlayer === player1) {
-      renderLogs(generateLogs('hit', player2, player1,hitValue));
-    } else {
-      renderLogs(generateLogs('hit', player1, player2, hitValue));
-    }
+    defendingPlayer.changeHP(hitValue);
+    defendingPlayer.renderHP();
+    generateLogs('hit', attackingPlayer, defendingPlayer, hitValue);
   } else {
-    if (hurtPlayer === player1) {
-      renderLogs(generateLogs('defence', player1, player2));
-    } else {
-      renderLogs(generateLogs('defence', player2, player1));
-    }
+    generateLogs('defence', defendingPlayer, attackingPlayer);
   }
 };
->>>>>>> Stashed changes
 
+function compareHP () {
   if (player1.hp === 0 || player2.hp === 0) {
     button.disabled = true;
-    getReloadPage();
+    createReloadButton();
   }
 
   if (player1.hp === 0 && player1.hp < player2.hp) {
     arenas.appendChild(playerWins(player2.name));
-    renderLogs(generateLogs('end', player2, player1));
+    generateLogs('end', player2, player1);
   } else if (player2.hp === 0 && player2.hp < player1.hp) {
     arenas.appendChild(playerWins(player1.name));
-    renderLogs(generateLogs('end', player1, player2));
+    generateLogs('end', player1, player2);
   } else if (player1.hp === 0 && player2.hp === 0) {
     arenas.appendChild(playerWins());
-    renderLogs(generateLogs('draw', player1, player2));
+    generateLogs('draw', player1, player2);
   }
-});
+};
 
-<<<<<<< Updated upstream
-arenas.appendChild(createPlayer(player1));
-arenas.appendChild(createPlayer(player2));
-=======
 function getTime () {
   const date = new Date();
   const hours = date.getHours();
@@ -268,45 +238,52 @@ function getLogs (type) {
   }
 };
 
+function renderLogs (log) {
+  const el = `<p>${log}<p>`;
+  $chat.insertAdjacentHTML('afterbegin', el);
+};
+
 function generateLogs (type, player1, player2, hitValue) {
 
   switch (type) {
     case 'start':
       let startText = getLogs(type)
       startText = startText.replace('[time]', getTime()).replace('[player1]', player1.name).replace('[player2]', player2.name);
-      return startText;
+      renderLogs (startText);
+      break;
     case 'end':
       let  endText = timeForLogs() + getLogs(type);
       endText = endText.replace('[playerWins]', player1.name).replace('[playerLose]', player2.name);
-      return endText;
+      renderLogs (endText);
+      break;
     case 'hit':
       let hitText = timeForLogs() + getLogs(type);
       hitText = hitText.replace('[playerKick]', player1.name).replace('[playerDefence]', player2.name);
       if (hitValue) {
         hitText = hitText + `[-${hitValue}] [${player2.hp}/100]`;
       }
-      return hitText;
+      renderLogs (hitText);
+      break;
     case 'defence':
       let defenceText = timeForLogs() + getLogs(type);
       defenceText = defenceText.replace('[playerDefence]', player1.name).replace('[playerKick]', player2.name);
-      return defenceText;
+      renderLogs (defenceText);
+      break;
     case 'draw':
       const drawText = timeForLogs() + getLogs(type);
-      return drawText;
+      renderLogs (drawText);
+      break;
+    default:
+      renderLogs('Что-то пошло не так');
+      break;
   }
-};
-
-function renderLogs (log) {
-  const el = `<p>${log}<p>`;
-  $chat.insertAdjacentHTML('afterbegin', el);
 };
 
 $formFight.addEventListener('submit', function (event) {
   event.preventDefault();
   const player = playerAtack();
   const enemy = enemyAtack();
-  compareAttacks(player.hit, enemy.defence, player.value, player2);
-  compareAttacks(enemy.hit, player.defence, enemy.value, player1);
+  compareAttacks(player.hit, enemy.defence, player.value, player1, player2);
+  compareAttacks(enemy.hit, player.defence, enemy.value, player2, player1);
   compareHP();
 });
->>>>>>> Stashed changes
