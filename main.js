@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 const arenas = document.querySelector(".arenas");
 const button = document.querySelector(".control .button");
 const $formFight = document.querySelector('.control');
@@ -287,3 +288,9 @@ $formFight.addEventListener('submit', function (event) {
   compareAttacks(enemy.hit, player.defence, enemy.value, player2, player1);
   compareHP();
 });
+=======
+import Game from './game.js';
+
+const game = new Game;
+game.start();
+>>>>>>> Stashed changes
