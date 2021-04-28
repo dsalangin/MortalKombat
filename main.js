@@ -3,6 +3,7 @@ const button = document.querySelector(".control .button");
 const $formFight = document.querySelector('.control');
 const $chat = document.querySelector('.chat');
 
+<<<<<<< Updated upstream
 const HIT = {
   head: 30,
   body: 25,
@@ -287,3 +288,7 @@ $formFight.addEventListener('submit', function (event) {
   compareAttacks(enemy.hit, player.defence, enemy.value, player2, player1);
   compareHP();
 });
+=======
+const game = new Game;
+game.start();
+>>>>>>> Stashed changes
